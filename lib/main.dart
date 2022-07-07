@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import './question.dart';
+import './answer.dart';
 
 // void main(List<String> args) {
 //   runApp(MainApp());
@@ -6,34 +8,50 @@ import 'package:flutter/material.dart';
 
 void main() => runApp(MainApp());
 
-class MainApp extends StatelessWidget {
-  void answerChoosen() {
+class MainApp extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MainAppState();
+  }
+}
+
+class _MainAppState extends State<MainApp> {
+  var _questionIndex = 0;
+
+  final questions = const [
+    {
+      'text': 'What\'s you favorite color?',
+      'answers': ['Red', 'Black', 'Green']
+    },
+    {
+      'text': 'What\'s you favorite animal?',
+      'answers': ['Rabbit', 'Cat', 'Dog']
+    },
+  ];
+
+  void _answerChoosen() {
+    setState(() {
+      _questionIndex += 1;
+    });
     print('Answer choosen');
   }
 
   @override
   Widget build(BuildContext context) {
-    var questions = [
-      'What\'s you favorite color?',
-      'What\'s you favorite animal?'
-    ];
-
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('App bar text'),
         ),
-        body: Column(children: <Widget>[
-          Text(questions[0]),
-          ElevatedButton(
-            child: Text('Answer 1'),
-            onPressed: answerChoosen,
-          ),
-          ElevatedButton(
-            child: Text('Answer 2'),
-            onPressed: answerChoosen,
-          ),
-        ]),
+        body: _questionIndex < questions.length
+            ? Column(children: <Widget>[
+                Question(questions[_questionIndex]['text'] as String),
+                ...(questions[_questionIndex]['answers'] as List<String>)
+                    .map((e) => Answer(_answerChoosen, e))
+              ])
+            : Center(
+                child: Text('You did it'),
+              ),
       ),
     );
   }
