@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './question.dart';
-import './answer.dart';
+import 'package:flutter_starter_guide/result.dart';
+
+import './quiz.dart';
 
 // void main(List<String> args) {
 //   runApp(MainApp());
@@ -17,23 +18,39 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  final questions = const [
+  final _questions = const [
     {
       'text': 'What\'s you favorite color?',
-      'answers': ['Red', 'Black', 'Green']
+      'answers': [
+        {'text': 'Red', 'score': 5},
+        {'text': 'Green', 'score': 5},
+        {'text': 'Blue', 'score': 55}
+      ]
     },
     {
       'text': 'What\'s you favorite animal?',
-      'answers': ['Rabbit', 'Cat', 'Dog']
+      'answers': [
+        {'text': 'Rabbit', 'score': 15},
+        {'text': 'Cat', 'score': 25},
+        {'text': 'Dog', 'score': 34}
+      ]
     },
   ];
 
-  void _answerChoosen() {
+  void _answerChoosen(int score) {
     setState(() {
       _questionIndex += 1;
     });
-    print('Answer choosen');
+    _totalScore += score;
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
   }
 
   @override
@@ -43,14 +60,11 @@ class _MainAppState extends State<MainApp> {
         appBar: AppBar(
           title: Text('App bar text'),
         ),
-        body: _questionIndex < questions.length
-            ? Column(children: <Widget>[
-                Question(questions[_questionIndex]['text'] as String),
-                ...(questions[_questionIndex]['answers'] as List<String>)
-                    .map((e) => Answer(_answerChoosen, e))
-              ])
-            : Center(
-                child: Text('You did it'),
+        body: _questionIndex < _questions.length
+            ? Quiz(_questions[_questionIndex], _answerChoosen)
+            : Result(
+                resultScore: _totalScore,
+                onReset: _resetQuiz,
               ),
       ),
     );
